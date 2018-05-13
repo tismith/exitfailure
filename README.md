@@ -1,5 +1,7 @@
 # exitfailure - convienent newtype wrapper for failure::Error
 
+[![Build Status](https://travis-ci.org/tismith/exitfailure.svg?branch=master)](https://travis-ci.org/tismith/exitfailure)
+
 `exitfailure` provides a newtype wrapper around `failure::Error` that will print a formatted list of error causes in it's `Debug` trait implementation.
 
 It is intended to be used with rust 1.26 and above's "? in main()" feature (see the [tracking issue here](https://github.com/rust-lang/rust/issues/43301)).
