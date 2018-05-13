@@ -2,18 +2,19 @@
 
 `exitfailure` provides a newtype wrapper around `failure::Error` that will print a formatted list of error causes in it's `Debug` trait implementation.
 
-It is intended to be used with rust 1.26 and above's "? in main()" feature (see the [tracking issue here][https://github.com/rust-lang/rust/issues/43301]).
+It is intended to be used with rust 1.26 and above's "? in main()" feature (see the [tracking issue here](https://github.com/rust-lang/rust/issues/43301)).
 
 Example:
 ```rust
 #[macro use] extern crate failure;
 extern crate exitfailure;
 
+use failure::ResultExt;
 use exitfailure::ExitFailure;
 
 fn main() -> Result<(), ExitFailure> {
-	let error = err_msg!("root cause failure");
-	Ok(error.context("this is some context")?)
+	let error = Err(failure::err_msg("root cause failure"));
+	Ok(error.context("this is some context".to_string())?)
 }
 ```
 
