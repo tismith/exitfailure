@@ -5,6 +5,7 @@ authors = ["Toby Smith <toby@tismith.id.au>"]
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/tismith/exitfailure"
+description = "A basic newtype wrapper around failure::Error"
 
 [dependencies]
 failure = "0.1.1"
