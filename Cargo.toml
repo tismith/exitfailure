@@ -1,0 +1,10 @@
+[package]
+name = "exitfailure"
+version = "0.1.0"
+authors = ["Toby Smith <toby@tismith.id.au>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/tismith/exitfailure"
+
+[dependencies]
+failure = "0.1.1"
