@@ -1,6 +1,7 @@
 language: rust
 cache: cargo
 rust:
+        - 1.26.0 # oldest supported version
         - stable
         - beta
         - nightly
