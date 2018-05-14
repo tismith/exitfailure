@@ -15,9 +15,14 @@ extern crate failure;
 /// # extern crate failure;
 /// # extern crate exitfailure;
 /// # use failure::ResultExt;
-/// fn main() -> Result<(), exitfailure::ExitFailure> {
+/// # use exitfailure::ExitFailure;
+/// fn main() -> Result<(), ExitFailure> {
+///     Ok(some_fn()?)
+/// }
+///
+/// fn some_fn() -> Result<(), failure::Error> {
 ///     let error = Err(failure::err_msg("root cause failure"));
-///     Ok(error.context("this is some extra context".to_string())?)
+///     Ok(error.context("this is some context".to_string())?)
 /// }
 pub struct ExitFailure(failure::Error);
 
@@ -34,8 +39,8 @@ impl std::fmt::Debug for ExitFailure {
     }
 }
 
-impl<F: failure::Fail> std::convert::From<F> for ExitFailure {
-    fn from(failure: F) -> Self {
-        ExitFailure(failure.into())
+impl std::convert::From<failure::Error> for ExitFailure {
+    fn from(failure: failure::Error) -> Self {
+        ExitFailure(failure)
     }
 }
