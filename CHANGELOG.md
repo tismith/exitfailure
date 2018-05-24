@@ -4,4 +4,4 @@
 
 #### Features
 
-*   add a From instance for failure::Context ([7fea9e2d](7fea9e2d))
+*   add a From instance for failure::Context ([7fea9e2d](https://github.com/tismith/exitfailure/commit/7fea9e2d063065c570f4a84c4395838790e8b0ae))

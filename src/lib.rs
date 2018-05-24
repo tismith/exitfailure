@@ -5,7 +5,7 @@
 //! - `ExitFailure`: a wrapper around `failure::Error` to allow ? printing from main
 //!    present a nicer error message
 //!
-//! Basically, ExitFailure should only every be used in the return type for
+//! Basically, ExitFailure should only ever be used in the return type for
 //! `main() -> Result<(), exitfailure::ExitFailure>`
 extern crate failure;
 
@@ -24,6 +24,7 @@ extern crate failure;
 ///     let error = Err(failure::err_msg("root cause failure"));
 ///     Ok(error.context("this is some context".to_string())?)
 /// }
+/// ```
 pub struct ExitFailure(failure::Error);
 
 impl std::fmt::Debug for ExitFailure {

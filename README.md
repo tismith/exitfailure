@@ -1,4 +1,4 @@
-# exitfailure - convienent newtype wrapper for failure::Error
+# exitfailure - convenient newtype wrapper for failure::Error
 
 [![Build Status](https://travis-ci.org/tismith/exitfailure.svg?branch=master)](https://travis-ci.org/tismith/exitfailure)
 [![](http://meritbadge.herokuapp.com/exitfailure)](https://crates.io/crates/exitfailure)
