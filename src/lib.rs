@@ -44,3 +44,12 @@ impl std::convert::From<failure::Error> for ExitFailure {
         ExitFailure(failure)
     }
 }
+
+impl<T> std::convert::From<failure::Context<T>> for ExitFailure
+where
+    T: std::fmt::Display + std::marker::Sync + std::marker::Send,
+{
+    fn from(failure: failure::Context<T>) -> Self {
+        ExitFailure(failure.into())
+    }
+}
