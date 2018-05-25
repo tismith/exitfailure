@@ -2,3 +2,6 @@
 repository = "https://github.com/tismith/exitfailure"
 changelog = "CHANGELOG.md"
 from-latest-tag = true
+
+[sections]
+Documentation = ["doc", "docs"]
