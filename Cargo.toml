@@ -10,6 +10,8 @@ description = "A basic newtype wrapper around failure::Error"
 [dependencies]
 failure = "0.1.1"
 
+[dev-dependencies]
+assert_cli = "0.5"
+
 [badges]
 travis-ci = { repository = "tismith/exitfailure", branch = "master" }
-
