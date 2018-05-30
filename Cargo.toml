@@ -1,6 +1,6 @@
 [package]
 name = "exitfailure"
-version = "0.2.3"
+version = "0.3.0"
 authors = ["Toby Smith <toby@tismith.id.au>"]
 license = "MIT OR Apache-2.0"
 readme = "README.md"

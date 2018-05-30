@@ -1,3 +1,13 @@
+<a name="0.3.0"></a>
+## 0.3.0 (2018-05-30)
+
+
+#### Features
+
+*   transition to dual apache/mit license ([5ec7f772](https://github.com/tismith/exitfailure/commit/5ec7f77215c7cd2ee8866fd908d596df7c9ea1d5))
+
+
+
 <a name="0.2.3"></a>
 ## 0.2.3 (2018-05-25)
 
