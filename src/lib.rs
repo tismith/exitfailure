@@ -40,17 +40,8 @@ impl std::fmt::Debug for ExitFailure {
     }
 }
 
-impl std::convert::From<failure::Error> for ExitFailure {
-    fn from(failure: failure::Error) -> Self {
-        ExitFailure(failure)
-    }
-}
-
-impl<T> std::convert::From<failure::Context<T>> for ExitFailure
-where
-    T: std::fmt::Display + std::marker::Sync + std::marker::Send,
-{
-    fn from(failure: failure::Context<T>) -> Self {
-        ExitFailure(failure.into())
+impl<T: Into<failure::Error>> From<T> for ExitFailure {
+    fn from(t: T) -> ExitFailure {
+        ExitFailure(t.into())
     }
 }
