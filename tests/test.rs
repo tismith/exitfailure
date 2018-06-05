@@ -9,7 +9,6 @@ fn get_cwd() -> String {
 
 #[test]
 fn test_example() {
-    //test that help works contains a USAGE string
     let bin: &str = &format!("{}/target/debug/examples/example", get_cwd());
     assert_cli::Assert::command(&[bin])
         .fails()
@@ -20,7 +19,6 @@ fn test_example() {
 
 #[test]
 fn test_context() {
-    //test that help works contains a USAGE string
     let bin: &str = &format!("{}/target/debug/examples/context", get_cwd());
     assert_cli::Assert::command(&[bin])
         .fails()
