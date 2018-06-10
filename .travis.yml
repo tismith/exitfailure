@@ -1,37 +1,53 @@
 language: rust
 cache: cargo
+env: # required for allow_failures
+os:
+  - linux
+  - osx
 rust:
-        - 1.26.0 # oldest supported version
-        - stable
-        - beta
-        - nightly
+  - stable
+  - beta
+  - nightly
+  - 1.26.0 #oldest supported release
+
 matrix:
-        allow_failures:
-                - rust: nightly
-        fast_finish: true
-before_script:
-env: NAME='cargo-travis'
-sudo: required # travis-ci/travis-ci#9061
-        - export PATH=$HOME/.cargo/bin:$PATH
+  fast_finish: true
+  allow_failures:
+    #- env: NAME='cargo-travis'
+    #- rust: nightly
+  include:
+    - rust: nightly-2018-05-29
+      env: # use env so updating versions causes cache invalidation
+        - CLIPPY_VERSION=0.0.206
+      before_script:
+        - rustup component add rustfmt-preview
+        - cargo install clippy --version $CLIPPY_VERSION || echo "clippy already installed"
+      script:
+        - cargo fmt --all -- --check
+        - cargo clippy -- -D clippy
+
+    - env: NAME='cargo-travis'
+      sudo: required # travis-ci/travis-ci#9061
+      before_script:
         - cargo install cargo-update || echo "cargo-update already installed"
         - cargo install cargo-travis || echo "cargo-travis already installed"
-        - cargo install-update -a # update outdated cached binaries
-        - rustup component add rustfmt-preview
-
-script:
+        - cargo install-update -a
+      script:
         - |
-                cargo fmt --all -- --check &&
-                cargo build    --verbose &&
-                cargo test     --verbose
-after_success:
-        - |
-                cargo coverage --verbose &&
-                bash <(curl -s https://codecov.io/bash) -s target/kcov
-addons: # required for kcov
+          cargo build    --verbose &&
+          cargo coverage --verbose &&
+          bash <(curl -s https://codecov.io/bash) -s target/kcov
+      addons: # required for kcov
         apt:
-                packages:
-                        - libcurl4-openssl-dev
-                        - libelf-dev
-                        - libdw-dev
-                        - binutils-dev
-                        - cmake
+          packages:
+            - libcurl4-openssl-dev
+            - libelf-dev
+            - libdw-dev
+            - binutils-dev
+            - cmake
+
+script: |
+  export RUST_BACKTRACE=1 &&
+  cargo build --verbose &&
+  cargo test  --verbose &&
+  cargo doc   --verbose
