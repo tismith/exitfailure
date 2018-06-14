@@ -1,3 +1,18 @@
+<a name="0.4.0"></a>
+## 0.4.0 (2018-06-14)
+
+
+#### Documentation
+
+*   update README for backtrace support ([f7e06e39](https://github.com/tismith/exitfailure/commit/f7e06e39742443e0127456c4b8f161f5e5e5e2f3))
+*   update docs for backtrace support ([8e47e84a](https://github.com/tismith/exitfailure/commit/8e47e84a8e0d9db0f67ae50e7650ac436f14913e))
+
+#### Features
+
+*   add bracktrace output (w. RUST_BACKTRACE=1) ([b3111c31](https://github.com/tismith/exitfailure/commit/b3111c31a238baf2f85f4ff8a4ab9a47e5d3e975))
+
+
+
 <a name="0.3.0"></a>
 ## 0.3.0 (2018-05-30)
 
