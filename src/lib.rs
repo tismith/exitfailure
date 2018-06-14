@@ -7,6 +7,9 @@
 //!
 //! Basically, ExitFailure should only ever be used in the return type for
 //! `main() -> Result<(), exitfailure::ExitFailure>`
+//!
+//! Will also include the backtrace as prepared by the failure::Error crate,
+//! if the environment variable RUST_BACKTRACE=1 is set.
 extern crate failure;
 
 /// The newtype wrapper around `failure::Error`
@@ -27,6 +30,8 @@ extern crate failure;
 /// ```
 pub struct ExitFailure(failure::Error);
 
+/// Prints a list of causes for this Error, along with any backtrace
+/// information collected by the Error (if RUST_BACKTRACE=1).
 impl std::fmt::Debug for ExitFailure {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         use failure::Fail;
