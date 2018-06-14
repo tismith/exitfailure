@@ -31,3 +31,7 @@ This will print, when executed:
 Error: this is some context
 caused by: root cause failure
 ```
+
+If the environment variable RUST_BACKTRACE=1 is set, then the printing will
+include whatever backtrace information is provided by the `failure::Error`
+that is being wrapped.
