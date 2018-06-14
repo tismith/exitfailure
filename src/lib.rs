@@ -33,9 +33,11 @@ impl std::fmt::Debug for ExitFailure {
         let mut fail: &Fail = self.0.cause();
         write!(f, "{}", fail)?;
         while let Some(cause) = fail.cause() {
-            write!(f, "\ncaused by: {}", cause)?;
+            write!(f, "\nInfo: caused by {}", cause)?;
             fail = cause;
         }
+
+        write!(f, "{}", self.0.backtrace())?;
         Ok(())
     }
 }
