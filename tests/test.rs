@@ -13,7 +13,7 @@ fn test_example() {
     assert_cli::Assert::command(&[bin])
         .fails()
         .stderr()
-        .contains("Error: this is some context\ncaused by: root cause failure")
+        .contains("Error: this is some context\nInfo: caused by root cause failure")
         .unwrap();
 }
 
@@ -23,6 +23,6 @@ fn test_context() {
     assert_cli::Assert::command(&[bin])
         .fails()
         .stderr()
-        .contains("Error: this is some context\ncaused by: root cause failure")
+        .contains("Error: this is some context\nInfo: caused by root cause failure")
         .unwrap();
 }
