@@ -6,6 +6,8 @@ license = "MIT OR Apache-2.0"
 readme = "README.md"
 repository = "https://github.com/tismith/exitfailure"
 description = "A basic newtype wrapper around failure::Error"
+categories = ["command-line-interface"]
+keywords = ["newtype", "failure", "error", "command-line", "cli"]
 
 [dependencies]
 failure = "0.1.1"

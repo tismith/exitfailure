@@ -1,3 +1,8 @@
+#![deny(
+    missing_docs, missing_debug_implementations, missing_copy_implementations, trivial_casts,
+    trivial_numeric_casts, unreachable_pub, unsafe_code, unstable_features, unused_extern_crates,
+    unused_import_braces, unused_qualifications, variant_size_differences
+)]
 //! A simple newtype wrapper around failure::Error
 //!
 //! The primary items exported by this library are:
@@ -8,7 +13,7 @@
 //! Basically, ExitFailure should only ever be used in the return type for
 //! `main() -> Result<(), exitfailure::ExitFailure>`
 //!
-//! Will also include the backtrace as prepared by the failure::Error crate,
+//! Will also include the backtrace as prepared by the `failure` crate,
 //! if the environment variable RUST_BACKTRACE=1 is set.
 extern crate failure;
 
