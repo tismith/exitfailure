@@ -17,3 +17,4 @@ assert_cli = "0.6"
 
 [badges]
 travis-ci = { repository = "tismith/exitfailure", branch = "master" }
+codecov = { repository = "tismith/exitfailure", branch = "master", service = "github" }
