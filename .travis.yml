@@ -34,7 +34,7 @@ matrix:
         - cargo install-update -a
       script:
         - |
-          cargo build    --verbose &&
+          cargo build --verbose &&
           cargo coverage --verbose &&
           bash <(curl -s https://codecov.io/bash) -s target/kcov
       addons: # required for kcov
@@ -49,5 +49,5 @@ matrix:
 script: |
   export RUST_BACKTRACE=1 &&
   cargo build --verbose &&
-  cargo test  --verbose &&
-  cargo doc   --verbose
+  cargo test --verbose &&
+  cargo doc --no-deps --verbose
