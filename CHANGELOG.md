@@ -1,3 +1,13 @@
+<a name="0.4.1"></a>
+## 0.4.1 (2018-06-18)
+
+
+#### Bug Fixes
+
+*   Insert a \n between cause and backtrace ([81e345f8](https://github.com/tismith/exitfailure/commit/81e345f8f0e6ef163ff2a164c6c72fc33116393e))
+
+
+
 <a name="0.4.0"></a>
 ## 0.4.0 (2018-06-14)
 
