@@ -47,7 +47,10 @@ impl std::fmt::Debug for ExitFailure {
             fail = cause;
         }
 
-        write!(f, "{}", self.0.backtrace())?;
+        match std::env::var("RUST_BACKTRACE") {
+            Ok(ref x) if x == "1" => write!(f, "\n{}", self.0.backtrace())?,
+            _ => (),
+        }
         Ok(())
     }
 }
