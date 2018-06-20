@@ -60,3 +60,19 @@ impl<T: Into<failure::Error>> From<T> for ExitFailure {
         ExitFailure(t.into())
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use std::fmt::Write;
+
+    #[test]
+    fn test_exitfailure() {
+        let mut buffer = String::new();
+        let error = failure::err_msg("some failure").context("some context");
+        let exitfailure: ExitFailure = error.into();
+        write!(buffer, "{:?}", exitfailure).unwrap();
+        assert!(buffer.contains("some failure"));
+        assert!(buffer.contains("some context"));
+    }
+}
