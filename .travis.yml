@@ -34,6 +34,7 @@ matrix:
         - cargo install-update -a
       script:
         - |
+          export RUST_BACKTRACE=1 &&
           cargo build --verbose &&
           cargo coverage --verbose &&
           bash <(curl -s https://codecov.io/bash) -s target/kcov
