@@ -1,7 +1,16 @@
 #![deny(
-    missing_docs, missing_debug_implementations, missing_copy_implementations, trivial_casts,
-    trivial_numeric_casts, unreachable_pub, unsafe_code, unstable_features, unused_extern_crates,
-    unused_import_braces, unused_qualifications, variant_size_differences
+    missing_docs,
+    missing_debug_implementations,
+    missing_copy_implementations,
+    trivial_casts,
+    trivial_numeric_casts,
+    unreachable_pub,
+    unsafe_code,
+    unstable_features,
+    unused_extern_crates,
+    unused_import_braces,
+    unused_qualifications,
+    variant_size_differences
 )]
 //! A simple newtype wrapper around failure::Error
 //!
