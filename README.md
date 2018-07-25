@@ -1,14 +1,17 @@
-# exitfailure - convenient newtype wrapper for failure::Error
+# exitfailure - convenient newtype wrappers for using ? in main()
 
 [![Build Status](https://travis-ci.org/tismith/exitfailure.svg?branch=master)](https://travis-ci.org/tismith/exitfailure)
 [![Build status](https://ci.appveyor.com/api/projects/status/2xhxwps2swlj3git/branch/master?svg=true)](https://ci.appveyor.com/project/tismith/exitfailure/branch/master)
 [![codecov](https://codecov.io/gh/tismith/exitfailure/branch/master/graph/badge.svg)](https://codecov.io/gh/tismith/exitfailure)
 [![](http://meritbadge.herokuapp.com/exitfailure)](https://crates.io/crates/exitfailure)
 
+`exitfailure` provides some newtype wrappers to help with using ? in `main()`.
 
-`exitfailure` provides a newtype wrapper around `failure::Error` that will print a formatted list of error causes in it's `Debug` trait implementation.
+For example, the `exitfailure::ExitFailure` type is a wrapper around `failure::Error` that will print a formatted list of error causes in it's `Debug` trait implementation.
 
 It is intended to be used with rust 1.26 and above's "? in main()" feature (see the [tracking issue here](https://github.com/rust-lang/rust/issues/43301)).
+
+For more information, including details on the other types, please see the [API Documentation](https://docs.rs/exitfailure/).
 
 Example:
 ```rust
@@ -31,7 +34,7 @@ fn some_fn() -> Result<(), failure::Error> {
 This will print, when executed:
 ```ignore
 Error: this is some context
-caused by: root cause failure
+Info: caused by root cause failure
 ```
 
 If the environment variable RUST_BACKTRACE=1 is set, then the printing will

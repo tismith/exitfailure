@@ -1,16 +1,7 @@
 #![deny(
-    missing_docs,
-    missing_debug_implementations,
-    missing_copy_implementations,
-    trivial_casts,
-    trivial_numeric_casts,
-    unreachable_pub,
-    unsafe_code,
-    unstable_features,
-    unused_extern_crates,
-    unused_import_braces,
-    unused_qualifications,
-    variant_size_differences
+    missing_docs, missing_debug_implementations, missing_copy_implementations, trivial_casts,
+    trivial_numeric_casts, unreachable_pub, unsafe_code, unstable_features, unused_extern_crates,
+    unused_import_braces, unused_qualifications, variant_size_differences
 )]
 //! Some newtype wrappers to help with using ? in main()
 //!
@@ -19,10 +10,10 @@
 //! - `ExitFailure`: a wrapper around `failure::Error` to allow ? printing from main
 //!    to present a nicer error message, including any available context and backtrace.
 //!
-//! - `ExitDisplay`: a wrapper around `E: std::fmt::Display` to allow the error message
+//! - `ExitDisplay<E>`: a wrapper around `E: std::fmt::Display` to allow the error message
 //!    from main to use `Display` and not `Debug`
 //!
-//! Basically, this types should only ever be used in the return type for
+//! Basically, these types should only ever be used in the return type for
 //! `main()`
 //!
 extern crate failure;
