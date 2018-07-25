@@ -1,8 +1,10 @@
 # exitfailure - convenient newtype wrapper for failure::Error
 
 [![Build Status](https://travis-ci.org/tismith/exitfailure.svg?branch=master)](https://travis-ci.org/tismith/exitfailure)
+[![Build status](https://ci.appveyor.com/api/projects/status/2xhxwps2swlj3git/branch/master?svg=true)](https://ci.appveyor.com/project/tismith/exitfailure/branch/master)
 [![codecov](https://codecov.io/gh/tismith/exitfailure/branch/master/graph/badge.svg)](https://codecov.io/gh/tismith/exitfailure)
 [![](http://meritbadge.herokuapp.com/exitfailure)](https://crates.io/crates/exitfailure)
+
 
 `exitfailure` provides a newtype wrapper around `failure::Error` that will print a formatted list of error causes in it's `Debug` trait implementation.
 
