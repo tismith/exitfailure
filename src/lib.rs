@@ -12,18 +12,19 @@
     unused_qualifications,
     variant_size_differences
 )]
-//! A simple newtype wrapper around failure::Error
+//! Some newtype wrappers to help with using ? in main()
 //!
 //! The primary items exported by this library are:
 //!
 //! - `ExitFailure`: a wrapper around `failure::Error` to allow ? printing from main
-//!    present a nicer error message
+//!    to present a nicer error message, including any available context and backtrace.
 //!
-//! Basically, ExitFailure should only ever be used in the return type for
-//! `main() -> Result<(), exitfailure::ExitFailure>`
+//! - `ExitDisplay`: a wrapper around `E: std::fmt::Display` to allow the error message
+//!    from main to use `Display` and not `Debug`
 //!
-//! Will also include the backtrace as prepared by the `failure` crate,
-//! if the environment variable RUST_BACKTRACE=1 is set.
+//! Basically, this types should only ever be used in the return type for
+//! `main()`
+//!
 extern crate failure;
 
 /// The newtype wrapper around `failure::Error`
@@ -66,8 +67,36 @@ impl std::fmt::Debug for ExitFailure {
 }
 
 impl<T: Into<failure::Error>> From<T> for ExitFailure {
-    fn from(t: T) -> ExitFailure {
+    fn from(t: T) -> Self {
         ExitFailure(t.into())
+    }
+}
+
+/// A newtype wrapper around `E: std::fmt::Display`
+///
+/// ```rust,should_panic
+/// # extern crate exitfailure;
+/// # use exitfailure::ExitDisplay;
+/// fn main() -> Result<(), ExitDisplay<String>> {
+///     Ok(some_fn()?)
+/// }
+///
+/// fn some_fn() -> Result<(), String> {
+///     Err("some error".into())
+/// }
+/// ```
+pub struct ExitDisplay<E: std::fmt::Display>(E);
+
+/// Prints the underlying error type, using `Display` and not `Debug`.
+impl<E: std::fmt::Display> std::fmt::Debug for ExitDisplay<E> {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
+impl<E: std::fmt::Display> From<E> for ExitDisplay<E> {
+    fn from(e: E) -> Self {
+        ExitDisplay(e)
     }
 }
 
@@ -84,5 +113,14 @@ mod test {
         write!(buffer, "{:?}", exitfailure).unwrap();
         assert!(buffer.contains("some failure"));
         assert!(buffer.contains("some context"));
+    }
+
+    #[test]
+    fn test_exitdisplay() {
+        let mut buffer = String::new();
+        let error = "some error".to_string();
+        let exitdisplay: ExitDisplay<String> = error.into();
+        write!(buffer, "{:?}", exitdisplay).unwrap();
+        assert_eq!(buffer, "some error");
     }
 }
