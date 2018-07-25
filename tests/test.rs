@@ -26,3 +26,13 @@ fn test_context() {
         .contains("Error: this is some context\nInfo: caused by root cause failure")
         .unwrap();
 }
+
+#[test]
+fn test_display() {
+    let bin: &str = &format!("{}/target/debug/examples/display", get_cwd());
+    assert_cli::Assert::command(&[bin])
+        .fails()
+        .stderr()
+        .contains("Error: this is an error message")
+        .unwrap();
+}
