@@ -7,11 +7,17 @@
 
 `exitfailure` provides some newtype wrappers to help with using ? in `main()`.
 
-For example, the `exitfailure::ExitFailure` type is a wrapper around `failure::Error` that will print a formatted list of error causes in it's `Debug` trait implementation.
-
 It is intended to be used with rust 1.26 and above's "? in main()" feature (see the [tracking issue here](https://github.com/rust-lang/rust/issues/43301)).
 
-For more information, including details on the other types, please see the [API Documentation](https://docs.rs/exitfailure/).
+The primary items exported by this library are:
+
+ - `ExitFailure`: a wrapper around `failure::Error` to allow ? printing from main
+    to present a nicer error message, including any available context and backtrace.
+
+ - `ExitDisplay<E>`: a wrapper around `E: std::fmt::Display` to allow the error message
+    from main to use `Display` and not `Debug`.
+
+For more information, including more details on the types, please see the [API Documentation](https://docs.rs/exitfailure/).
 
 Example:
 ```rust
