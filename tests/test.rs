@@ -6,31 +6,34 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-extern crate assert_cli;
+extern crate assert_cmd;
+extern crate predicates;
+use assert_cmd::prelude::*;
+use predicates::prelude::*;
 
-//kcov doesn't play nice with assert_cli() see
-//https://github.com/assert-rs/assert_cli/issues/101
-use std::env;
-fn get_cwd() -> String {
-    env::current_dir().unwrap().to_str().unwrap().to_string()
+macro_rules! test_body {
+    ($name:expr, $matcher:expr) => {
+        let bin = assert_cmd::cargo::cargo_example_path($name).unwrap();
+        let pred = predicates::str::contains($matcher).from_utf8();
+        std::process::Command::new(bin)
+            .assert()
+            .failure()
+            .stderr(pred);
+    };
+    ($name:expr) => {
+        test_body!(
+            $name,
+            "Error: this is some context\nInfo: caused by root cause failure"
+        )
+    };
 }
 
 #[test]
 fn test_example() {
-    let bin: &str = &format!("{}/target/debug/examples/example", get_cwd());
-    assert_cli::Assert::command(&[bin])
-        .fails()
-        .stderr()
-        .contains("Error: this is some context\nInfo: caused by root cause failure")
-        .unwrap();
+    test_body!("example");
 }
 
 #[test]
 fn test_context() {
-    let bin: &str = &format!("{}/target/debug/examples/context", get_cwd());
-    assert_cli::Assert::command(&[bin])
-        .fails()
-        .stderr()
-        .contains("Error: this is some context\nInfo: caused by root cause failure")
-        .unwrap();
+    test_body!("context");
 }
