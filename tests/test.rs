@@ -37,3 +37,8 @@ fn test_example() {
 fn test_context() {
     test_body!("context");
 }
+
+#[test]
+fn test_display() {
+    test_body!("display", "Error: this is an error message");
+}
