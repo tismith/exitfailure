@@ -1,3 +1,17 @@
+<a name="0.5.0"></a>
+## 0.5.0 (2018-07-27)
+
+
+#### Documentation
+
+*   Update documentation for ExitDisplay ([06872181](https://github.com/tismith/exitfailure/commit/06872181c458cc1091329de43b2f80cae4582128))
+
+#### Features
+
+*   Add ExitDisplay for using Display, not Debug in error messages ([2ac1ea2e](https://github.com/tismith/exitfailure/commit/2ac1ea2e1059cbf82e931020853279eb968a6877))
+
+
+
 <a name="0.4.1"></a>
 ## 0.4.1 (2018-06-18)
 
