@@ -10,7 +10,7 @@ categories = ["command-line-interface"]
 keywords = ["newtype", "failure", "error", "command-line", "cli"]
 
 [dependencies]
-failure = "0.1.1"
+failure = { git = "https://github.com/rust-lang-nursery/failure" }
 
 [dev-dependencies]
 assert_cmd = "0.9.0"

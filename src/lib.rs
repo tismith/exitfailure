@@ -59,7 +59,7 @@ pub struct ExitFailure(failure::Error);
 impl std::fmt::Debug for ExitFailure {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         use failure::Fail;
-        let mut fail: &Fail = self.0.cause();
+        let mut fail: &Fail = self.0.as_fail();
         write!(f, "{}", fail)?;
         while let Some(cause) = fail.cause() {
             write!(f, "\nInfo: caused by {}", cause)?;
