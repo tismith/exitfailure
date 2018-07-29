@@ -42,3 +42,25 @@ fn test_context() {
 fn test_display() {
     test_body!("display", "Error: this is an error message");
 }
+
+#[test]
+fn test_no_backtrace() {
+    let bin = assert_cmd::cargo::cargo_example_path("example").unwrap();
+    let pred = predicates::str::contains("stack backtrace").from_utf8();
+    std::process::Command::new(bin)
+        .env_remove("RUST_BACKTRACE")
+        .assert()
+        .failure()
+        .stderr(pred.not());
+}
+
+#[test]
+fn test_backtrace() {
+    let bin = assert_cmd::cargo::cargo_example_path("example").unwrap();
+    let pred = predicates::str::contains("stack backtrace").from_utf8();
+    std::process::Command::new(bin)
+        .env("RUST_BACKTRACE", "1")
+        .assert()
+        .failure()
+        .stderr(pred);
+}
