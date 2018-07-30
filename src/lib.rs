@@ -86,26 +86,31 @@ impl<T: Into<failure::Error>> From<T> for ExitFailure {
 /// ```rust,should_panic
 /// # extern crate exitfailure;
 /// # use exitfailure::ExitDisplay;
-/// fn main() -> Result<(), ExitDisplay<String>> {
+/// fn main() -> Result<(), ExitDisplay> {
+///     some_other_fn()?;
 ///     Ok(some_fn()?)
 /// }
 ///
-/// fn some_fn() -> Result<(), String> {
-///     Err("some error".into())
+/// fn some_fn() -> Result<(), &'static str> {
+///     Err("some error")
+/// }
+///
+/// fn some_other_fn() -> Result<(), isize> {
+///     Ok(())
 /// }
 /// ```
-pub struct ExitDisplay<E: std::fmt::Display>(E);
+pub struct ExitDisplay(Box<dyn std::fmt::Display>);
 
 /// Prints the underlying error type, using `Display` and not `Debug`.
-impl<E: std::fmt::Display> std::fmt::Debug for ExitDisplay<E> {
+impl std::fmt::Debug for ExitDisplay {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{}", self.0)
     }
 }
 
-impl<E: std::fmt::Display> From<E> for ExitDisplay<E> {
+impl<E: std::fmt::Display + 'static> From<E> for ExitDisplay {
     fn from(e: E) -> Self {
-        ExitDisplay(e)
+        ExitDisplay(Box::new(e))
     }
 }
 
@@ -127,8 +132,8 @@ mod test {
     #[test]
     fn test_exitdisplay() {
         let mut buffer = String::new();
-        let error = "some error".to_string();
-        let exitdisplay: ExitDisplay<String> = error.into();
+        let error = "some error";
+        let exitdisplay: ExitDisplay = error.into();
         write!(buffer, "{:?}", exitdisplay).unwrap();
         assert_eq!(buffer, "some error");
     }
