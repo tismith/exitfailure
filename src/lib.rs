@@ -59,11 +59,12 @@ pub struct ExitFailure(failure::Error);
 impl std::fmt::Debug for ExitFailure {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         use failure::Fail;
-        let mut fail: &Fail = self.0.as_fail();
+
+        let fail: &Fail = self.0.as_fail();
         write!(f, "{}", fail)?;
-        while let Some(cause) = fail.cause() {
+
+        for cause in fail.iter_causes() {
             write!(f, "\nInfo: caused by {}", cause)?;
-            fail = cause;
         }
 
         if let Ok(x) = std::env::var("RUST_BACKTRACE") {
@@ -71,6 +72,7 @@ impl std::fmt::Debug for ExitFailure {
                 write!(f, "\n{}", self.0.backtrace())?
             }
         }
+
         Ok(())
     }
 }
