@@ -67,7 +67,7 @@ impl std::fmt::Debug for ExitFailure {
         }
 
         if let Ok(x) = std::env::var("RUST_BACKTRACE") {
-            if x == "1" {
+            if x != "0" {
                 write!(f, "\n{}", self.0.backtrace())?
             }
         }
