@@ -58,9 +58,7 @@ pub struct ExitFailure(failure::Error);
 /// information collected by the Error (if RUST_BACKTRACE=1).
 impl std::fmt::Debug for ExitFailure {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        use failure::Fail;
-
-        let fail: &Fail = self.0.as_fail();
+        let fail = self.0.as_fail();
         write!(f, "{}", fail)?;
 
         for cause in fail.iter_causes() {
