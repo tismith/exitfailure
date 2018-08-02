@@ -13,7 +13,7 @@ keywords = ["newtype", "failure", "error", "command-line", "cli"]
 failure = "0.1.1"
 
 [dev-dependencies]
-assert_cmd = "0.6.0"
+assert_cmd = "0.9.0"
 predicates = "0.9.0"
 
 [badges]
