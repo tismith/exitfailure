@@ -12,7 +12,11 @@ use assert_cmd::prelude::*;
 use predicates::prelude::*;
 
 fn get_cwd() -> String {
-        std::env::current_dir().unwrap().to_str().unwrap().to_string()
+    std::env::current_dir()
+        .unwrap()
+        .to_str()
+        .unwrap()
+        .to_string()
 }
 
 macro_rules! test_body {
