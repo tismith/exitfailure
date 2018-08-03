@@ -1,3 +1,17 @@
+<a name="0.5.1"></a>
+## 0.5.1 (2018-08-03)
+
+
+#### Bug Fixes
+
+*   Make backtrace work with nonzero values of RUST_BACKTRACE ([1f551d92](https://github.com/tismith/exitfailure/commit/1f551d92313da81316cf989f3750e831a1d66cc7))
+
+#### Features
+
+*   Make use of new failure 0.1.2 iterators ([78c02a8a](https://github.com/tismith/exitfailure/commit/78c02a8af17d209033d87bc1a01064e13e1907fe))
+
+
+
 <a name="0.5.0"></a>
 ## 0.5.0 (2018-07-27)
 
