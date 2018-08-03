@@ -11,11 +11,19 @@ extern crate predicates;
 use assert_cmd::prelude::*;
 use predicates::prelude::*;
 
+fn get_cwd() -> String {
+    std::env::current_dir()
+        .unwrap()
+        .to_str()
+        .unwrap()
+        .to_string()
+}
+
 macro_rules! test_body {
     ($name:expr, $matcher:expr) => {
-        let bin = assert_cmd::cargo::cargo_example_path($name).unwrap();
+        let bin = format!("{}/target/debug/examples/{}", get_cwd(), $name);
         let pred = predicates::str::contains($matcher).from_utf8();
-        std::process::Command::new(bin)
+        std::process::Command::new(&bin)
             .assert()
             .failure()
             .stderr(pred);
@@ -45,9 +53,9 @@ fn test_display() {
 
 #[test]
 fn test_no_backtrace() {
-    let bin = assert_cmd::cargo::cargo_example_path("example").unwrap();
+    let bin = format!("{}/target/debug/examples/example", get_cwd());
     let pred = predicates::str::contains("stack backtrace").from_utf8();
-    std::process::Command::new(bin)
+    std::process::Command::new(&bin)
         .env_remove("RUST_BACKTRACE")
         .assert()
         .failure()
@@ -56,9 +64,9 @@ fn test_no_backtrace() {
 
 #[test]
 fn test_backtrace() {
-    let bin = assert_cmd::cargo::cargo_example_path("example").unwrap();
+    let bin = format!("{}/target/debug/examples/example", get_cwd());
     let pred = predicates::str::contains("stack backtrace").from_utf8();
-    std::process::Command::new(bin)
+    std::process::Command::new(&bin)
         .env("RUST_BACKTRACE", "1")
         .assert()
         .failure()
