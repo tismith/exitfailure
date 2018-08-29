@@ -25,14 +25,18 @@
 //!
 //! The primary items exported by this library are:
 //!
-//! - `ExitFailure`: a wrapper around `failure::Error` to allow ? printing from `main`
-//!    to present a nicer error message, including any available context and backtrace.
+//! - `Result`: a type alias around `std::result::Result<(), exitfailure::ExitFailure>` to be used
+//!    in the return position from `main`. To make your program simpler and give nice error
+//!    messages, just make your main function return this, e.g. `fn main() -> exitfailure::Result`
 //!
-//! - `Result`: a type alias around `std::result::Result<(), ExitFailure>` to be used
-//!    in the return position from `main`.
+//! - `ExitFailure`: a wrapper around `failure::Error` to allow ? printing from `main`
+//!    to present a nicer error message, including any available context and backtrace. It's
+//!    better to use the `Result` type alias instead of using this directly.
 //!
 //! - `ExitDisplay<E>`: a wrapper around `E: std::fmt::Display` to allow the error message
-//!    from main to use `Display` and not `Debug`
+//!    from main to use `Display` and not `Debug`. Use this if the functions you're using `?` with
+//!    are returning some non-`Error` type that implements `Display` that you want to use for
+//!    user-visible error messages (such as `String`).
 //!
 //! Basically, these types should only ever be used in the return type for
 //! `main()`
@@ -57,7 +61,7 @@ extern crate failure;
 /// ```
 pub struct ExitFailure(failure::Error);
 
-/// A helping type alias around `std::result::Result`
+/// A helping type alias around `std::result::Result<(), exitfailure::ExitFailure>`
 ///
 /// ```rust,should_panic
 /// # extern crate failure;
