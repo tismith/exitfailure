@@ -43,6 +43,23 @@
 //!
 extern crate failure;
 
+/// A helping type alias around `std::result::Result<(), exitfailure::ExitFailure>`
+///
+/// ```rust,should_panic
+/// # extern crate failure;
+/// # extern crate exitfailure;
+/// # use failure::ResultExt;
+/// fn main() -> exitfailure::Result {
+///     Ok(some_fn()?)
+/// }
+///
+/// fn some_fn() -> Result<(), failure::Error> {
+///     let error = Err(failure::err_msg("root cause failure"));
+///     Ok(error.context("this is some context".to_string())?)
+/// }
+/// ```
+pub type Result = std::result::Result<(), ExitFailure>;
+
 /// The newtype wrapper around `failure::Error`
 ///
 /// ```rust,should_panic
@@ -60,23 +77,6 @@ extern crate failure;
 /// }
 /// ```
 pub struct ExitFailure(failure::Error);
-
-/// A helping type alias around `std::result::Result<(), exitfailure::ExitFailure>`
-///
-/// ```rust,should_panic
-/// # extern crate failure;
-/// # extern crate exitfailure;
-/// # use failure::ResultExt;
-/// fn main() -> exitfailure::Result {
-///     Ok(some_fn()?)
-/// }
-///
-/// fn some_fn() -> Result<(), failure::Error> {
-///     let error = Err(failure::err_msg("root cause failure"));
-///     Ok(error.context("this is some context".to_string())?)
-/// }
-/// ```
-pub type Result = std::result::Result<(), ExitFailure>;
 
 /// Prints a list of causes for this Error, along with any backtrace
 /// information collected by the Error (if RUST_BACKTRACE=1).
