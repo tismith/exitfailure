@@ -7,18 +7,9 @@
 // except according to those terms.
 
 #![deny(
-    missing_docs,
-    missing_debug_implementations,
-    missing_copy_implementations,
-    trivial_casts,
-    trivial_numeric_casts,
-    unreachable_pub,
-    unsafe_code,
-    unstable_features,
-    unused_extern_crates,
-    unused_import_braces,
-    unused_qualifications,
-    variant_size_differences
+    missing_docs, missing_debug_implementations, missing_copy_implementations, trivial_casts,
+    trivial_numeric_casts, unreachable_pub, unsafe_code, unstable_features, unused_extern_crates,
+    unused_import_braces, unused_qualifications, variant_size_differences
 )]
 
 //! Some newtype wrappers to help with using ? in main()
@@ -53,6 +44,23 @@ extern crate failure;
 /// }
 /// ```
 pub struct ExitFailure(failure::Error);
+
+/// A helping type alias around `std::result::Result`
+///
+/// ```rust,should_panic
+/// # extern crate failure;
+/// # extern crate exitfailure;
+/// # use failure::ResultExt;
+/// fn main() -> exitfailure::Result {
+///     Ok(some_fn()?)
+/// }
+///
+/// fn some_fn() -> Result<(), failure::Error> {
+///     let error = Err(failure::err_msg("root cause failure"));
+///     Ok(error.context("this is some context".to_string())?)
+/// }
+/// ```
+pub type Result = std::result::Result<(), ExitFailure>;
 
 /// Prints a list of causes for this Error, along with any backtrace
 /// information collected by the Error (if RUST_BACKTRACE=1).
