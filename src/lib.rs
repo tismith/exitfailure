@@ -7,17 +7,29 @@
 // except according to those terms.
 
 #![deny(
-    missing_docs, missing_debug_implementations, missing_copy_implementations, trivial_casts,
-    trivial_numeric_casts, unreachable_pub, unsafe_code, unstable_features, unused_extern_crates,
-    unused_import_braces, unused_qualifications, variant_size_differences
+    missing_docs,
+    missing_debug_implementations,
+    missing_copy_implementations,
+    trivial_casts,
+    trivial_numeric_casts,
+    unreachable_pub,
+    unsafe_code,
+    unstable_features,
+    unused_extern_crates,
+    unused_import_braces,
+    unused_qualifications,
+    variant_size_differences
 )]
 
-//! Some newtype wrappers to help with using ? in main()
+//! Some newtype wrappers to help with using ? in `main`
 //!
 //! The primary items exported by this library are:
 //!
-//! - `ExitFailure`: a wrapper around `failure::Error` to allow ? printing from main
+//! - `ExitFailure`: a wrapper around `failure::Error` to allow ? printing from `main`
 //!    to present a nicer error message, including any available context and backtrace.
+//!
+//! - `Result`: a type alias around `std::result::Result<(), ExitFailure>` to be used
+//!    in the return position from `main`.
 //!
 //! - `ExitDisplay<E>`: a wrapper around `E: std::fmt::Display` to allow the error message
 //!    from main to use `Display` and not `Debug`
