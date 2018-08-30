@@ -1,11 +1,11 @@
 [package]
 name = "exitfailure"
-version = "0.5.1"
+version = "0.6.0"
 authors = ["Toby Smith <toby@tismith.id.au>"]
 license = "MIT OR Apache-2.0"
 readme = "README.md"
 repository = "https://github.com/tismith/exitfailure"
-description = "A basic newtype wrappers for use with ? in main"
+description = "Types to help with using ? in main"
 categories = ["command-line-interface"]
 keywords = ["newtype", "failure", "error", "command-line", "cli"]
 
