@@ -9,10 +9,9 @@
 extern crate exitfailure;
 extern crate failure;
 
-use exitfailure::ExitFailure;
 use failure::ResultExt;
 
-fn main() -> Result<(), ExitFailure> {
+fn main() -> exitfailure::Result {
     Ok(some_fn()?)
 }
 
