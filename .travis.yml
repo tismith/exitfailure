@@ -3,6 +3,7 @@ env: # required for allow_failures
 os:
   - linux
   - osx
+  - windows
 rust:
   - stable
   - beta
@@ -23,8 +24,8 @@ matrix:
   fast_finish: true
   allow_failures:
   include:
-    - rust: stable
-      env: NAME='linting'
+    - name: linting
+      rust: stable
       before_script:
         - rustup component add rustfmt-preview
         - rustup component add clippy-preview
@@ -32,7 +33,8 @@ matrix:
         - cargo fmt --all -- --check
         - cargo clippy
 
-    - env: NAME='coverage'
+    - name: coverage
+      rust: stable
       sudo: required # travis-ci/travis-ci#9061
       before_script:
         - cargo install cargo-update || echo "cargo-update already installed"
