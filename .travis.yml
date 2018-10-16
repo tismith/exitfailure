@@ -52,9 +52,6 @@ matrix:
             - binutils-dev
             - cmake
 
-before_install:
-  - if [ "$TRAVIS_OS_NAME" = windows ]; then choco install windows-sdk-10.0; fi
-
 script: |
   export RUST_BACKTRACE=1 &&
   cargo build --verbose &&
