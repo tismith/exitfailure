@@ -7,7 +7,6 @@ rust:
   - stable
   - beta
   - nightly
-  - 1.26.0 #oldest supported release
 
 # Recommended caching strategy from https://levans.fr/rust_travis_cache.html
 # Need to cache the whole `.cargo` directory to keep .crates.toml for
