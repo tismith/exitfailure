@@ -15,8 +15,3 @@ failure = "0.1.2"
 [dev-dependencies]
 assert_cmd = "1.0.1"
 predicates = "1.0.0"
-
-[badges]
-travis-ci = { repository = "tismith/exitfailure", branch = "master" }
-appveyor = { repository = "tismith/exitfailure", branch = "master", service = "github" }
-codecov = { repository = "tismith/exitfailure", branch = "master", service = "github" }
