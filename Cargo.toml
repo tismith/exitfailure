@@ -14,4 +14,4 @@ failure = "0.1.2"
 
 [dev-dependencies]
 assert_cmd = "2.2.2"
-predicates = "1.0.0"
+predicates = "3.1.4"
