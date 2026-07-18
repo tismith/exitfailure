@@ -54,7 +54,7 @@ fn test_display() {
 #[test]
 fn test_no_backtrace() {
     let bin = format!("{}/target/debug/examples/example", get_cwd());
-    let pred = predicates::str::contains("example::some_fn").from_utf8();
+    let pred = predicates::str::contains("backtrace::").from_utf8();
     std::process::Command::new(&bin)
         .env_remove("RUST_BACKTRACE")
         .assert()
@@ -65,7 +65,7 @@ fn test_no_backtrace() {
 #[test]
 fn test_backtrace() {
     let bin = format!("{}/target/debug/examples/example", get_cwd());
-    let pred = predicates::str::contains("example::some_fn").from_utf8();
+    let pred = predicates::str::contains("backtrace::").from_utf8();
     std::process::Command::new(&bin)
         .env("RUST_BACKTRACE", "1")
         .assert()

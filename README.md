@@ -1,10 +1,5 @@
 # exitfailure - convenient newtype wrappers for using ? in main()
 
-[![Build Status](https://travis-ci.org/tismith/exitfailure.svg?branch=master)](https://travis-ci.org/tismith/exitfailure)
-[![Build status](https://ci.appveyor.com/api/projects/status/2xhxwps2swlj3git/branch/master?svg=true)](https://ci.appveyor.com/project/tismith/exitfailure/branch/master)
-[![codecov](https://codecov.io/gh/tismith/exitfailure/branch/master/graph/badge.svg)](https://codecov.io/gh/tismith/exitfailure)
-[![](http://meritbadge.herokuapp.com/exitfailure)](https://crates.io/crates/exitfailure)
-
 `exitfailure` provides some newtype wrappers to help with using ? in `main()`.
 
 It is intended to be used with rust 1.26 and above's "? in main()" feature (see the [tracking issue here](https://github.com/rust-lang/rust/issues/43301)).

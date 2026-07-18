@@ -11,7 +11,6 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -20,3 +19,83 @@ jobs:
       run: cargo build --verbose
     - name: Run tests
       run: cargo test --verbose
+    - name: Build documentation
+      run: cargo doc --no-deps --verbose
+
+  test:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: macOS (stable)
+            os: macos-latest
+            rust: stable
+            experimental: false
+          - name: Ubuntu (beta)
+            os: ubuntu-latest
+            rust: beta
+            experimental: false
+          - name: Ubuntu (nightly)
+            os: ubuntu-latest
+            rust: nightly
+            experimental: true
+          - name: Windows (stable, x86_64 MSVC)
+            os: windows-latest
+            rust: stable-x86_64-pc-windows-msvc
+            experimental: false
+          - name: Windows (stable, i686 MSVC)
+            os: windows-latest
+            rust: stable-i686-pc-windows-msvc
+            experimental: false
+          - name: Windows (stable, x86_64 GNU)
+            os: windows-latest
+            rust: stable-x86_64-pc-windows-gnu
+            experimental: false
+          - name: Windows (stable, i686 GNU)
+            os: windows-latest
+            rust: stable-i686-pc-windows-gnu
+            experimental: false
+          - name: Windows (beta, x86_64 MSVC)
+            os: windows-latest
+            rust: beta-x86_64-pc-windows-msvc
+            experimental: false
+          - name: Windows (nightly, x86_64 MSVC)
+            os: windows-latest
+            rust: nightly-x86_64-pc-windows-msvc
+            experimental: true
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install Rust toolchain
+      run: rustup toolchain install ${{ matrix.rust }} --profile minimal
+    - name: Run tests
+      run: cargo +${{ matrix.rust }} test --verbose
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install linting components
+      run: rustup component add clippy rustfmt
+    - name: Check formatting
+      run: cargo fmt --all -- --check
+    - name: Run Clippy
+      run: cargo clippy --all-targets
+
+  coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install cargo-llvm-cov
+      uses: taiki-e/install-action@cargo-llvm-cov
+    - name: Build examples for integration tests
+      run: cargo build --examples
+    - name: Generate coverage summary
+      run: |
+        set -o pipefail
+        cargo llvm-cov --no-clean --summary-only --fail-under-lines 90 | tee -a "$GITHUB_STEP_SUMMARY"
