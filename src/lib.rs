@@ -34,6 +34,8 @@
 //! Basically, these types should only ever be used in the return type for
 //! `main()`
 //!
+// Required for Rust 1.26 compatibility; unnecessary on newer compilers.
+#[allow(unused_extern_crates)]
 extern crate failure;
 
 /// The newtype wrapper around `failure::Error`
