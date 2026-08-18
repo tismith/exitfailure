@@ -26,10 +26,10 @@
 //! The primary items exported by this library are:
 //!
 //! - `ExitFailure`: a wrapper around `failure::Error` to allow ? printing from main
-//!    to present a nicer error message, including any available context and backtrace.
+//!   to present a nicer error message, including any available context and backtrace.
 //!
 //! - `ExitDisplay<E>`: a wrapper around `E: std::fmt::Display` to allow the error message
-//!    from main to use `Display` and not `Debug`
+//!   from main to use `Display` and not `Debug`
 //!
 //! Basically, these types should only ever be used in the return type for
 //! `main()`

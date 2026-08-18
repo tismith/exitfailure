@@ -84,7 +84,7 @@ jobs:
     - name: Check formatting
       run: cargo fmt --all -- --check
     - name: Run Clippy
-      run: cargo clippy --all-targets
+      run: cargo clippy --all-targets -- -D warnings
 
   coverage:
     runs-on: ubuntu-latest
