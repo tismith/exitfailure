@@ -1,7 +1,5 @@
 name: Dependabot auto-merge
 
-# Enable repository auto-merge and require the existing CI checks before merging
-# this workflow. Native auto-merge must remain subject to those branch rules.
 on:
   pull_request_target:
     types: [opened, reopened, synchronize, ready_for_review]
@@ -9,16 +7,21 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: dependabot-auto-merge-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
-  enable-auto-merge:
+  merge-after-ci:
     if: >-
       github.event.pull_request.user.login == 'dependabot[bot]' &&
       github.event.pull_request.head.repo.full_name == github.repository &&
       github.event.pull_request.base.ref == github.event.repository.default_branch &&
       !github.event.pull_request.draft
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 30
     permissions:
+      actions: read
       contents: write
       pull-requests: write
     steps:
@@ -29,12 +32,132 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Enable auto-merge for patch and minor updates
+      - name: Wait for CI and merge eligible updates
         if: >-
           steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
           steps.metadata.outputs.update-type == 'version-update:semver-minor'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_URL: ${{ github.event.pull_request.html_url }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        run: gh pr merge --auto --squash --match-head-commit "$HEAD_SHA" "$PR_URL"
+          BASE_BRANCH: ${{ github.event.repository.default_branch }}
+          CI_PATH: .github/workflows/rust.yml
+          REQUIRED_JOBS: '["build","lint","coverage","macOS (stable)","Ubuntu (beta)","Windows (stable, x86_64 MSVC)","Windows (stable, i686 MSVC)","Windows (stable, x86_64 GNU)","Windows (stable, i686 GNU)","Windows (beta, x86_64 MSVC)"]'
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import subprocess
+          import time
+          
+          REPO = os.environ["REPO"]
+          PR_NUMBER = os.environ["PR_NUMBER"]
+          HEAD_SHA = os.environ["HEAD_SHA"]
+          BASE_BRANCH = os.environ["BASE_BRANCH"]
+          CI_PATH = os.environ["CI_PATH"]
+          REQUIRED_JOBS = json.loads(os.environ["REQUIRED_JOBS"])
+          
+          
+          def api(endpoint, method="GET", **fields):
+              command = ["gh", "api", "--method", method, endpoint]
+              for name, value in fields.items():
+                  command.extend(["-f", name + "=" + value])
+              return json.loads(subprocess.check_output(command, text=True))
+          
+          
+          def validate_pr(pr):
+              if (
+                  pr["state"] != "open"
+                  or pr["draft"]
+                  or pr["user"]["login"] != "dependabot[bot]"
+                  or pr["head"]["sha"] != HEAD_SHA
+                  or pr["head"]["repo"]["full_name"] != REPO
+                  or pr["base"]["repo"]["full_name"] != REPO
+                  or pr["base"]["ref"] != BASE_BRANCH
+              ):
+                  raise RuntimeError("PR no longer matches the verified Dependabot update")
+          
+          
+          def passing_run(runs):
+              matching = [
+                  run for run in runs
+                  if run["head_sha"] == HEAD_SHA
+                  and run["event"] == "pull_request"
+                  and run["path"] == CI_PATH
+                  and run["head_repository"]["full_name"] == REPO
+              ]
+              if not matching:
+                  return None
+              run = max(matching, key=lambda item: (item["id"], item.get("run_attempt", 1)))
+              if run["status"] != "completed":
+                  return None
+              if run["conclusion"] != "success":
+                  raise RuntimeError("Latest matching CI run did not succeed")
+              return run
+          
+          
+          def validate_jobs(jobs):
+              latest = {}
+              for job in jobs:
+                  previous = latest.get(job["name"])
+                  if previous is None or job["id"] > previous["id"]:
+                      latest[job["name"]] = job
+              for name in REQUIRED_JOBS:
+                  job = latest.get(name)
+                  if not job or job["status"] != "completed" or job["conclusion"] != "success":
+                      raise RuntimeError("Required CI job is missing or not successful: " + name)
+          
+          
+          def main():
+              # Bound the wait; a slow or missing workflow never becomes permission to merge.
+              for attempt in range(150):
+                  validate_pr(api("repos/" + REPO + "/pulls/" + PR_NUMBER))
+                  result = api(
+                      "repos/" + REPO + "/actions/runs?event=pull_request&head_sha="
+                      + HEAD_SHA + "&per_page=100"
+                  )
+                  run = passing_run(result["workflow_runs"])
+                  if run is not None:
+                      jobs = api(
+                          "repos/" + REPO + "/actions/runs/" + str(run["id"])
+                          + "/attempts/" + str(run["run_attempt"]) + "/jobs?per_page=100"
+                      )
+                      validate_jobs(jobs["jobs"])
+                      # A rerun invalidates the previous result; never use an earlier attempt.
+                      current_run = api("repos/" + REPO + "/actions/runs/" + str(run["id"]))
+                      if (
+                          current_run["run_attempt"] != run["run_attempt"]
+                          or current_run["status"] != "completed"
+                          or current_run["conclusion"] != "success"
+                      ):
+                          raise RuntimeError("CI changed while checking its results")
+                      validate_pr(api("repos/" + REPO + "/pulls/" + PR_NUMBER))
+                      merged = api(
+                          "repos/" + REPO + "/pulls/" + PR_NUMBER + "/merge",
+                          method="PUT", sha=HEAD_SHA, merge_method="squash"
+                      )
+                      if not merged.get("merged"):
+                          raise RuntimeError("GitHub did not merge the pull request")
+                      print("Merged verified Dependabot update after all selected CI jobs passed")
+                      # Token-created merges do not trigger push workflows. Explicitly
+                      # dispatch the existing tested deployment pipeline where configured.
+                      dispatch = os.environ.get("POST_MERGE_WORKFLOW", "")
+                      if dispatch:
+                          subprocess.run(
+                              ["gh", "api", "--method", "POST",
+                               "repos/" + REPO + "/actions/workflows/" + dispatch + "/dispatches",
+                               "-f", "ref=" + BASE_BRANCH],
+                              check=True
+                          )
+                          print("Dispatched the existing post-merge pipeline")
+                      return
+                  if attempt == 0:
+                      print("Waiting for the selected CI workflow on the verified head SHA", flush=True)
+                  time.sleep(10)
+              raise RuntimeError("Timed out waiting for CI; leaving the PR open")
+          
+          
+          if __name__ == "__main__":
+              main()
+          PY
