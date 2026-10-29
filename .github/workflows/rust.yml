@@ -49,6 +49,7 @@ jobs:
           - name: Windows (stable, i686 MSVC)
             os: windows-latest
             rust: stable-i686-pc-windows-msvc
+            install_flags: --force-non-host
             experimental: false
           - name: Windows (stable, x86_64 GNU)
             os: windows-latest
@@ -57,6 +58,7 @@ jobs:
           - name: Windows (stable, i686 GNU)
             os: windows-latest
             rust: stable-i686-pc-windows-gnu
+            install_flags: --force-non-host
             experimental: false
           - name: Windows (beta, x86_64 MSVC)
             os: windows-latest
@@ -69,8 +71,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    # rustup 1.29.1 requires explicit opt-in for 32-bit host tools on 64-bit Windows.
     - name: Install Rust toolchain
-      run: rustup toolchain install ${{ matrix.rust }} --profile minimal
+      run: rustup toolchain install ${{ matrix.rust }} --profile minimal ${{ matrix.install_flags }}
     - name: Run tests
       run: cargo +${{ matrix.rust }} test --verbose
 
