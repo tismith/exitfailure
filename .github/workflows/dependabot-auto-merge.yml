@@ -28,17 +28,8 @@ jobs:
     steps:
       # Never check out or execute pull-request code in this privileged workflow.
       # workflow_run metadata is untrusted until the PR, head SHA and CI jobs are verified.
-      - name: Read verified Dependabot metadata
-        id: metadata
-        uses: dependabot/fetch-metadata@21025c705c08248db411dc16f3619e6b5f9ea21a # v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
+      # All Dependabot semver levels are eligible, provided CI passes.
       - name: Verify completed CI and merge eligible updates
-        if: >-
-          steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
-          steps.metadata.outputs.update-type == 'version-update:semver-minor' ||
-          steps.metadata.outputs.update-type == 'version-update:semver-major'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
