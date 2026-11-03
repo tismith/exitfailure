@@ -1,23 +1,24 @@
 name: Dependabot auto-merge
 
 on:
-  pull_request_target:
-    types: [opened, reopened, synchronize, ready_for_review]
+  workflow_run:
+    workflows: ["Rust"]
+    types: [completed]
 
 permissions:
   contents: read
 
 concurrency:
-  group: dependabot-auto-merge-${{ github.event.pull_request.number }}
+  group: dependabot-auto-merge-${{ github.event.workflow_run.id }}
   cancel-in-progress: true
 
 jobs:
   merge-after-ci:
     if: >-
-      github.event.pull_request.user.login == 'dependabot[bot]' &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      github.event.pull_request.base.ref == github.event.repository.default_branch &&
-      !github.event.pull_request.draft
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.repository.full_name == github.repository &&
+      github.event.workflow_run.pull_requests[0] != null
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
@@ -26,23 +27,17 @@ jobs:
       pull-requests: write
     steps:
       # Never check out or execute pull-request code in this privileged workflow.
-      - name: Read verified Dependabot metadata
-        id: metadata
-        uses: dependabot/fetch-metadata@21025c705c08248db411dc16f3619e6b5f9ea21a # v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Wait for CI and merge eligible updates
-        if: >-
-          steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
-          steps.metadata.outputs.update-type == 'version-update:semver-minor' ||
-          steps.metadata.outputs.update-type == 'version-update:semver-major'
+      # workflow_run metadata is untrusted until the PR, head SHA and CI jobs are verified.
+      # All Dependabot semver levels are eligible, provided CI passes.
+      - name: Verify completed CI and merge eligible updates
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_NUMBER: ${{ github.event.workflow_run.pull_requests[0].number }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
           BASE_BRANCH: ${{ github.event.repository.default_branch }}
+          CI_RUN_ID: ${{ github.event.workflow_run.id }}
+          CI_RUN_ATTEMPT: ${{ github.event.workflow_run.run_attempt }}
           CI_PATH: .github/workflows/rust.yml
           REQUIRED_JOBS: '["build","lint","coverage","macOS (stable)","Ubuntu (beta)","Windows (stable, x86_64 MSVC)","Windows (stable, i686 MSVC)","Windows (stable, x86_64 GNU)","Windows (stable, i686 GNU)","Windows (beta, x86_64 MSVC)"]'
         run: |
@@ -56,6 +51,8 @@ jobs:
           PR_NUMBER = os.environ["PR_NUMBER"]
           HEAD_SHA = os.environ["HEAD_SHA"]
           BASE_BRANCH = os.environ["BASE_BRANCH"]
+          CI_RUN_ID = int(os.environ["CI_RUN_ID"])
+          CI_RUN_ATTEMPT = int(os.environ["CI_RUN_ATTEMPT"])
           CI_PATH = os.environ["CI_PATH"]
           REQUIRED_JOBS = json.loads(os.environ["REQUIRED_JOBS"])
           
@@ -120,6 +117,8 @@ jobs:
                   )
                   run = passing_run(result["workflow_runs"])
                   if run is not None:
+                      if run["id"] != CI_RUN_ID or run["run_attempt"] != CI_RUN_ATTEMPT:
+                          raise RuntimeError("Selected CI run differs from the triggering completed run")
                       jobs = api(
                           "repos/" + REPO + "/actions/runs/" + str(run["id"])
                           + "/attempts/" + str(run["run_attempt"]) + "/jobs?per_page=100"
